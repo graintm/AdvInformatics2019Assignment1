@@ -67,3 +67,28 @@ gives the output:
 ```
 This output includes RAM needed (from which one can tell how many cores to request) and files read/written.
 
+3. To alter the previous command so that it writes execution time and RAM useage to a file, one can use the following command instead of using the "-verbose" command:
+```
+/usr/bin/time -f "Time: %E, max RAM: %M" -o timetest.txt echo "This is me testing the time command" >> wctest
+```
+This command prints output to the file "timetest.txt" in the format "Time: x:xx.xx max RAM: xxxx"
+For the command above, it worked out as "Time: 0:00.00, max RAM: 1600"
+
+4. The units of elapsed time are h:mm:ss, and for RAM they are kbytes.
+
+5. One can use the "test" command to see whether files exist using conditional execution or an if...fi statement:
+```
+touch whale
+[ -e whale ] && echo "There she blows" || echo "Argh matey"
+```
+This should output "There she blows" since we just created the file "whale". The "-s" option of the test command will check that a file exists and isn't empty. If we change the "-e" option to "-s", the output will be "Argh matey" since we just created the (empty) file.
+
+6. Here is an example of how an if...fi statement could be used to prevent a command from outputting and overwriting a file which already exists:
+```
+if [ ! -s outfilename.txt ]
+then
+command infilename.txt > outfilename.txt
+else
+echo "stopped: outfilename.txt already exists"
+fi
+```
