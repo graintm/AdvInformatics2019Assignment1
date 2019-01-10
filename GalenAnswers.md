@@ -92,3 +92,29 @@ else
 echo "stopped: outfilename.txt already exists"
 fi
 ```
+
+## Trickier questions
+
+7. "usr/bin/time -v/f/o" will not work on OS X, at least according to [this stack overflow post](https://stackoverflow.com/questions/32515381/mac-os-x-usr-bin-time-verbose-flag) because OS X uses BSD time which doesn't include the RAM measurement. According to an answer on the same post, it can be accomplished by installing GNU time manually. I don't have a computer with OS X, so I haven't been able to test whether my answers are correct.
+
+8. We can ensure that our process won't try to use more RAM than is available and crash the node by ensuring that the node has the necessary amount of free RAM before the job is loaded on:
+```
+#$ -l mem_free=24GB
+```
+In addition, we have to limit the amount of RAM being used by each job. Since each core = 8 Gb, 3 [core ram equivalents](https://hpc.oit.uci.edu/BioClusterGE.pdf) are needed per job (24/8 = 3). So, we add the line:
+```
+-pe openmp 3
+```
+This line will ensure that it is impossible for so many jobs to be loaded onto the node that the node would crash. At most, 21 of these jobs could be loaded onto a single node, using up a total of 504 Gb of RAM at maximum.
+
+Sample script:
+```
+#!/bin/bash
+#$ -N myjobname
+#$ -q bio,free64
+#$ -m beas
+#$ -M galentm@uci.edu   
+#$ -pe openmp 3
+
+some commands here
+```
