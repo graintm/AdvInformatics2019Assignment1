@@ -32,4 +32,38 @@
 
 ## HPC good citizenship
 
-1. 
+1. Using "-pe openmp 64" does not mean that commands will use multiple processors, just that 64 cores will be reserved for your job. As far as I can tell, there's nothing to stop someone from submitting an extremely simple script with a single command and requesting 64 cores for it, but the command would still only run on one core.
+
+2. One can find this information by running a smaller test dataset prefixed by the "/usr/bin/time -v" command. For example, running the commands 
+```
+touch timetest.txt
+/usr/bin/time -v echo "This is me testing the time command" >> timetest.txt
+```
+gives the output:
+```
+        Command being timed: "echo This is me testing the time command"
+        User time (seconds): 0.00
+        System time (seconds): 0.00
+        Percent of CPU this job got: 0%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 1600
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 72
+        Voluntary context switches: 7
+        Involuntary context switches: 1
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 8
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+```
+This output includes RAM needed (from which one can tell how many cores to request) and files read/written.
+
